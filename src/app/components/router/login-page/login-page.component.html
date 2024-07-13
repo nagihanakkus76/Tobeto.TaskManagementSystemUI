@@ -1,0 +1,40 @@
+
+<div class="row d-flex justify-content-center align-items-center" style="height: 98vh;">
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="card">
+          <div class="card-header">
+              <h3>Oturum Aç</h3>
+              <p>Oturum açmak için lütfen bilgilerinizi doldurun</p>
+          </div>
+          <div class="card-body">
+              <form [formGroup]="loginForm" (submit)="login()" autocomplete="off">
+                  <div class="form-group">
+                      <label>Kullanıcı Adı</label>
+                      <input type="text" class="form-control" formControlName="userName" name="userNameOrEmail" required minlength="3">
+                      <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="form-group mt-2 position-relative">
+                      <label>Şifre</label>
+                      <input type="password" #password class="form-control" formControlName="password" name="password" required >
+                      <div class="invalid-feedback"></div>
+                      @if(password.type === "password"){
+                          <i class="fa-solid fa-eye eye" (click)="showOrHidePassword()"></i>
+                      }@else {
+                          <i class="fa-solid fa-eye-slash eye" (click)="showOrHidePassword()"></i>
+                      }
+                  </div>
+                  <div class="form-group mt-3">
+                      <button type="submit" class="btn btn-dark w-100">
+                          <i class="fa-solid fa-lock me-1"></i>
+                          Giriş Yap
+                      </button>
+
+                  </div>
+
+                  <small class="mt-2 d-flex justify-content-center">Bir hesabın yoksa &nbsp;<a routerLink="/register"> Kaydol</a></small>
+
+              </form>
+          </div>
+      </div>
+  </div>
+</div>

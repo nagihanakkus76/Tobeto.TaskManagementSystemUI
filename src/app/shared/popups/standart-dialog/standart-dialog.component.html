@@ -1,0 +1,17 @@
+<div class="popup-container">
+  <h3 mat-dialog-title class="text">{{data.title}}</h3>
+  <p mat-dialog-content class="text">{{data.message}}</p>
+
+  <div mat-dialog-actions class="buttons d-flex justify-content-end">
+    @if (data.noText) {
+    <a href="javascript:void(0)" class="btn rounded-4 fw-500 py-2 rounded-pill mw-120 px-4 text-capitalize m-2"
+      (click)="noClicked()" [ngClass]="data.noClass ?? 'btn-outline-danger'" mat-buttton>{{data.noText}}</a>
+    }
+
+    @if (data.yesText) {
+    <a href="javascript:void(0)" class="btn rounded-4 fw-500 py-2 rounded-pill mw-120 px-4 text-capitalize m-2"
+      (click)="yesClicked()" [ngClass]="data.yesClass ?? 'btn-primary'" mat-buttton>{{data.yesText}}</a>
+    }
+  </div>
+
+</div>

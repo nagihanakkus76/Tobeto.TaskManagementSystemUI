@@ -1,0 +1,139 @@
+<app-layout>
+
+  <div class="d-flex ms-4 me-4">
+
+    @if (isShowCreateSection) {
+    <form [formGroup]="createDataForm">
+      <div class="bg-white py-5 px-3 rounded me-3 mb-5 h-auto">
+
+        <!-- Entity -->
+        <app-normal-input id="task-name" label="Görev Adı" [formControlInput]="createControl.title"
+          [isRequired]="true"></app-normal-input>
+
+        <app-normal-input id="task-description" label="Görev Tanımı" [formControlInput]="createControl.description" />
+
+        <!-- Entity -->
+
+        <div class="d-flex px-3 mt-3 justify-content-end">
+          <app-cancel-button value="İptal" (click)="cancelClicked()" />
+          <app-submit-button [value]="createButtonText" (click)="saveClicked()"
+            [isFormInvalid]="createDataForm.invalid" />
+        </div>
+      </div>
+    </form>
+    }
+
+    @if (isShowUpdateSection) {
+    <form [formGroup]="updateDataForm">
+      <div class="bg-white py-5 px-3 rounded me-3 mb-5 h-auto">
+
+        <!-- Entity -->
+        <app-normal-input id="task-name" label="Görev Adı" [formControlInput]="updateControl.title">
+          <!-- @if (isFormInvalid(control.name)) { <app-validation-error message="Hastane Adı Zorunlu" /> } -->
+        </app-normal-input>
+
+        <app-normal-input id="task-description" label="Görev Tanımı" [formControlInput]="updateControl.description" />
+
+        <!-- <app-normal-input id="task-status" label="Görev Durumu" [formControlInput]="updateControl.status" /> -->
+        <div class="d-flex flex-column">
+          <label class="text-dark-primary mb-2" for="task-status"> Görev Durumu</label>
+          <select class="border form-control rounded min-width-300" name="task-status" id="task-status"
+            [formControl]="updateControl.status">
+            <option value=0>Yeni</option>
+            <option value=1>Devam Ediyor</option>
+            <option value=2>Tamamlandı</option>
+          </select>
+        </div>
+        <!-- Entity -->
+
+        <div class="d-flex px-3 mt-3 justify-content-end">
+          <app-cancel-button value="İptal" (click)="cancelClicked()" />
+          <app-submit-button [value]="updateButtonText" (click)="updateClicked()"
+            [isFormInvalid]="updateDataForm.invalid" />
+        </div>
+      </div>
+    </form>
+    }
+
+    <div class="mb-5 w-100 ">
+      <div class="d-flex justify-content-between ">
+        @if (dataList.length >=1) {
+        <app-normal-input id="search" (keyup)="keyupSearch($event)" placeholder="Görev Ara..." />}@else {
+        <div></div>
+        }
+
+        <app-create-button (click)="createClicked()" value="Görev Ekle" />
+      </div>
+
+
+      @if (dataList.length >=1) {
+
+      <div class="bg-white rounded py-5 px-3">
+        <table mat-table [dataSource]="dataList | filterTask:searchText" matSort>
+
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i + 1}} </td>
+          </ng-container>
+
+          <!-- Entity -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Görev Adı </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Görev Tanımı </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="creationDate">
+            <th mat-header-cell *matHeaderCellDef> Oluşturulma Tarihi </th>
+            <td mat-cell *matCellDef="let element"> {{element.creationDate | date:'short'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Görev Durumu </th>
+            <td mat-cell *matCellDef="let element">
+              <button type="button" class="btn dropdown-toggle " [ngClass]="getStatusColor(element.status)"
+                data-bs-toggle="dropdown">
+                {{getStatusName(element.status)}}
+              </button>
+              <ul class="dropdown-menu">
+                <li (click)="updateNew(element.id)" class="dropdown-item">Yeni</li>
+                <li (click)="updateInProgress(element.id)" class="dropdown-item">Devam Ediyor</li>
+                <li (click)="updateCompleted(element.id)" class="dropdown-item">Tamamlandı</li>
+              </ul>
+            </td>
+          </ng-container>
+          <!-- Entity -->
+
+
+          <ng-container matColumnDef="actions">
+            <th class="text-end" mat-header-cell *matHeaderCellDef> İşlemler </th>
+            <td class="text-end" mat-cell *matCellDef="let element">
+              <app-edit-button (click)="editClicked(element.id)" />
+              <app-delete-button (click)="deleteClicked(element.id)" />
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+      }
+      @else {
+      <div class="d-flex">
+        <span class="col-3"></span>
+        <div class="bg-white p-4 mt-3 d-flex justify-content-center align-item-center rounded col-6">
+          Henüz bir görev eklenmedi
+        </div>
+        <span class="col-3"></span>
+      </div>
+      }
+
+    </div>
+
+  </div>
+
+</app-layout>
