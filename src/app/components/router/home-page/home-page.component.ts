@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateButtonComponent } from "../../../shared/buttons/create-button/create-button.component";
 import { EditButtonComponent } from "../../../shared/buttons/edit-button/edit-button.component";
 import { DeleteButtonComponent } from "../../../shared/buttons/delete-button/delete-button.component";
@@ -20,6 +20,8 @@ import { StandartDialogComponent } from '../../../shared/popups/standart-dialog/
 import { LayoutComponent } from "../../../shared/layout/layout.component";
 import { AuthService } from '../../../services/auth.service';
 import { LocalStorageService } from '../../../services/local-storage.service';
+import { BsToastSuccessComponent } from "../../../shared/alerts/bs-toast-success/bs-toast-success.component";
+import { BsToastErrorComponent } from "../../../shared/alerts/bs-toast-error/bs-toast-error.component";
 
 
 
@@ -27,11 +29,13 @@ import { LocalStorageService } from '../../../services/local-storage.service';
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, CreateButtonComponent, EditButtonComponent, DeleteButtonComponent, SubmitButtonComponent, CancelButtonComponent, NormalInputComponent, MatTableModule, FilterTaskPipe, LayoutComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, CreateButtonComponent, EditButtonComponent, DeleteButtonComponent, SubmitButtonComponent, CancelButtonComponent, NormalInputComponent, MatTableModule, FilterTaskPipe, LayoutComponent, BsToastSuccessComponent, BsToastErrorComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })
 export class HomePageComponent implements OnInit {
+  @ViewChild(BsToastSuccessComponent) toastSuccess: BsToastSuccessComponent
+  @ViewChild(BsToastErrorComponent) toastError: BsToastErrorComponent
 
   isShowCreateSection: boolean = false;
   isShowUpdateSection: boolean = false;
@@ -61,8 +65,8 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.createDataForm = this.formBuilder.group({
-      title: new FormControl(),
-      description: new FormControl(),
+      title: new FormControl('',Validators.required),
+      description: new FormControl('',Validators.required),
       userID: new FormControl()
     })
 
@@ -146,9 +150,13 @@ export class HomePageComponent implements OnInit {
 
     data.userID = parseInt(this.loggedInUserID ?? "0")
     this.taskService.add(data).subscribe(res => {
+      this.toastSuccess.show("Kayıt Başarılı")
       this.fillDataList()
       this.resetForm();
-    })
+    },
+    (err) => {this.toastError.show("Kayıt Başarısız")}
+
+  )
 
 
   }
@@ -162,9 +170,13 @@ export class HomePageComponent implements OnInit {
     var data = convertFormToTaskUpdateModel(this.updateDataForm.controls)
 
     this.taskService.update(data).subscribe(res => {
+      this.toastSuccess.show("Güncelleme Başarılı")
       this.fillDataList()
       this.resetForm();
-    })
+    },
+    (err) => {this.toastError.show("Güncelleme Başarısız")}
+
+  )
 
 
   }
@@ -186,24 +198,40 @@ export class HomePageComponent implements OnInit {
     const data = this.dataList.filter(d => d.id == id)[0]
 
     this.taskService.changeStatusCompleted(data.id).subscribe((res) => {
+      this.toastSuccess.show("Durum Güncelleme Başarılı")
+
       this.fillDataList()
-    })
+    },
+    (err) => {this.toastError.show("Durum Güncelleme Başarısız")}
+
+
+  )
   }
 
   updateInProgress(id: number) {
     const data = this.dataList.filter(d => d.id == id)[0]
 
     this.taskService.changeStatusInProgress(data.id).subscribe((res) => {
+      this.toastSuccess.show("Durum Güncelleme Başarılı")
+
       this.fillDataList()
-    })
+    },
+    (err) => {this.toastError.show("Durum Güncelleme Başarısız")}
+
+  )
   }
 
   updateNew(id: number) {
     const data = this.dataList.filter(d => d.id == id)[0]
 
     this.taskService.changeStatusNew(data.id).subscribe((res) => {
+      this.toastSuccess.show("Durum Güncelleme Başarılı")
+
       this.fillDataList()
-    })
+    },
+    (err) => {this.toastError.show("Durum Güncelleme Başarısız")}
+
+  )
   }
 
 
@@ -234,9 +262,14 @@ export class HomePageComponent implements OnInit {
 
   deleteData(id: any): void {
     this.taskService.delete(id).subscribe(res => {
+      this.toastSuccess.show("Kayıt Silme Başarılı")
+
       this.fillDataList()
       this.resetForm();
-    })
+    },
+    (err) => {this.toastError.show("Kayıt Silme Başarısız")}
+
+  )
   }
 
   keyupSearch(event: KeyboardEvent) {

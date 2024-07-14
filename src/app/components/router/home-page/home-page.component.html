@@ -1,4 +1,6 @@
 <app-layout>
+  <app-bs-toast-error></app-bs-toast-error>
+  <app-bs-toast-success></app-bs-toast-success>
 
   <div class="d-flex ms-4 me-4">
 
@@ -10,7 +12,7 @@
         <app-normal-input id="task-name" label="Görev Adı" [formControlInput]="createControl.title"
           [isRequired]="true"></app-normal-input>
 
-        <app-normal-input id="task-description" label="Görev Tanımı" [formControlInput]="createControl.description" />
+        <app-normal-input id="task-description" label="Görev Tanımı" [formControlInput]="createControl.description" [isRequired]="true" />
 
         <!-- Entity -->
 
@@ -66,7 +68,7 @@
       </div>
 
 
-      @if (dataList.length >=1) {
+      @if (dataList.length >= 1) {
 
       <div class="bg-white rounded py-5 px-3">
         <table mat-table [dataSource]="dataList | filterTask:searchText" matSort>

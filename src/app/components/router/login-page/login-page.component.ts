@@ -3,11 +3,17 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { LocalStorageService } from '../../../services/local-storage.service';
+import { BsToastErrorComponent } from '../../../shared/alerts/bs-toast-error/bs-toast-error.component';
+import { BsToastSuccessComponent } from '../../../shared/alerts/bs-toast-success/bs-toast-success.component';
+import { map, switchMap, timer } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+
+
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, FormsModule, RouterModule, BsToastErrorComponent,BsToastSuccessComponent],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })
@@ -15,7 +21,8 @@ export class LoginPageComponent implements OnInit {
 
   loginForm!: FormGroup;
   @ViewChild("password") password: ElementRef<HTMLInputElement> | undefined
-
+  @ViewChild(BsToastErrorComponent) toastError: BsToastErrorComponent
+  @ViewChild(BsToastSuccessComponent) toastSuccess: BsToastSuccessComponent
 
   constructor(
     private authService: AuthService,
@@ -43,10 +50,25 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
+
   login() {
     this.authService.login(this.loginForm.value).subscribe((res) => {
       this.localStorageService.set("token", res.token);
-      this.router.navigateByUrl("/");
-    })
+      this.authService.isAuthenticated()
+
+      this.toastSuccess.show("Giriş Başarılı")
+      setTimeout(() => {
+        this.router.navigateByUrl("/home");
+      }, 1000);
+    },
+      (err:HttpErrorResponse) => {
+        this.toastError.show(err.error.Detail)
+      }
+    )
+
+
+
+
   }
+
 }

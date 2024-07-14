@@ -42,6 +42,7 @@ export class AuthService {
       if (now > exp) {
         this.localStorageService.remove("token");
         this.localStorageService.remove("userID");
+        this.localStorageService.remove("userName");
         this.router.navigateByUrl("/login")
         return false;
       }
@@ -49,19 +50,24 @@ export class AuthService {
       const id = decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
       this.localStorageService.set("userID",id)
 
-      // this.tokenDecode.id = decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-         this.tokenDecode.userName = decode["Username"];
+      const userName = decode["UserName"];
+      this.localStorageService.set("userName", userName)
+
+
+      this.tokenDecode.id = decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+      this.tokenDecode.userName = decode["UserName"];
 
       return true;
     }
 
-    this.router.navigateByUrl("/login");
+        //  this.router.navigateByUrl("/login");
     return false;
   }
 
   logout(){
     this.localStorageService.remove("token");
     this.localStorageService.remove("userID");
+    this.localStorageService.remove("userName");
     this.router.navigateByUrl("/login");
   }
 }
